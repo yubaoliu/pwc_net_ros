@@ -4,6 +4,8 @@ services:
     build: .
     container_name: pwc_master
     command: roscore
+    network_mode: host
+    privileged: true
 
   rqt:
     container_name: pwc_rqt
@@ -12,13 +14,14 @@ services:
       - master
     command: rqt --perspective-file /root/catkin_ws/src/pwc_net_ros/rqt/test.perspective
     environment: 
-      - ROS_HOSTNAME=pwc_rqt
-      - ROS_MASTER_URI=http://pwc_master:11311
       - DISPLAY
       - QT_X11_NO_MITSHM=1
     volumes: 
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ..:/root/catkin_ws/src/pwc_net_ros/
       - root:/root
+    network_mode: host
+    privileged: true
 
   terminal:
     build: .
@@ -26,13 +29,15 @@ services:
     command: lxterminal
     runtime: nvidia
     environment: 
-      - ROS_HOSTNAME=pwc_terminal
-      - ROS_MASTER_URI=http://pwc_master:11311
       - DISPLAY
       - QT_X11_NO_MITSHM=1
     volumes: 
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ..:/root/catkin_ws/src/pwc_net_ros/
+      - ${DATASET_DIR}:/root/Dataset
       - root:/root
+    network_mode: host
+    privileged: true
 
 volumes: 
   root:
