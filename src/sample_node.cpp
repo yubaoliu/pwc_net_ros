@@ -11,39 +11,38 @@
 #include <map>
 #include <vector>
 
-namespace pwc_net{
+namespace pwc_net {
 
-SampleNode::SampleNode() {
-  ros::NodeHandle node_handle;
-  ros::NodeHandle private_node_handle("~");
+SampleNode::SampleNode()
+{
+    ros::NodeHandle node_handle;
+    ros::NodeHandle private_node_handle("~");
 
-  std::string image_topic = node_handle.resolveName("image");
-  image_transport_.reset(new image_transport::ImageTransport(node_handle));
-  image_sub_ = image_transport_->subscribe(image_topic, 1, &SampleNode::imageCallback, this);
-  
-  flow_pub_ = private_node_handle.advertise<sensor_msgs::Image>("optical_flow", 1);
-  visualized_flow_pub_ = private_node_handle.advertise<sensor_msgs::Image>("visualized_optical_flow", 1);
+    std::string image_topic = node_handle.resolveName("image");
+    image_transport_.reset(new image_transport::ImageTransport(node_handle));
+    image_sub_ = image_transport_->subscribe(image_topic, 1, &SampleNode::imageCallback, this);
+
+    flow_pub_ = private_node_handle.advertise<sensor_msgs::Image>("optical_flow", 1);
+    visualized_flow_pub_ = private_node_handle.advertise<sensor_msgs::Image>("visualized_optical_flow", 1);
 }
 
-void SampleNode::imageCallback(const sensor_msgs::ImageConstPtr& image) {
-  if (previous_image_)
-  {
-    cv_bridge::CvImage optical_flow(image->header, sensor_msgs::image_encodings::TYPE_32FC2);
-    bool success = pwc_net_.estimateOpticalFlow(*previous_image_, *image, optical_flow.image);
+void SampleNode::imageCallback(const sensor_msgs::ImageConstPtr& image)
+{
+    if (previous_image_) {
+        cv_bridge::CvImage optical_flow(image->header, sensor_msgs::image_encodings::TYPE_32FC2);
+        bool success = pwc_net_.estimateOpticalFlow(*previous_image_, *image, optical_flow.image);
 
-    if (success)
-    {
-      flow_pub_.publish(optical_flow.toImageMsg());
+        if (success) {
+            flow_pub_.publish(optical_flow.toImageMsg());
 
-      cv_bridge::CvImage visualized_optical_flow(image->header, sensor_msgs::image_encodings::BGR8);
-      pwc_net_.visualizeOpticalFlow(optical_flow.image, visualized_optical_flow.image, 5.0f);
+            cv_bridge::CvImage visualized_optical_flow(image->header, sensor_msgs::image_encodings::BGR8);
+            pwc_net_.visualizeOpticalFlow(optical_flow.image, visualized_optical_flow.image, 5.0f);
 
-      visualized_flow_pub_.publish(visualized_optical_flow.toImageMsg());
+            visualized_flow_pub_.publish(visualized_optical_flow.toImageMsg());
+        }
     }
-  }
-  
-  previous_image_ = image;
+
+    previous_image_ = image;
 }
 
 } // namespace pwc_net
-

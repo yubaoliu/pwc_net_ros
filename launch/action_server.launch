@@ -1,0 +1,6 @@
+<launch>
+  <param name="action_name" value="pwc_net_action"/>
+
+  <node name="pwc_net_action_server" pkg="pwc_net" type="action_server" required="true" output="screen">
+  </node>
+</launch>
