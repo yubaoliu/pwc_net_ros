@@ -1,5 +1,14 @@
 cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
-project(pwc_net CUDA CXX)
+# project(pwc_net_ros)
+project(pwc_net_ros CUDA CXX)
+
+add_compile_options(-std=c++11)
+
+# SET(CMAKE_BUILD_TYPE "Debug")
+SET(CMAKE_BUILD_TYPE "Release")
+
+SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb")
+SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 
 find_package(catkin REQUIRED
   cv_bridge
@@ -38,8 +47,6 @@ catkin_package(
 # Path for flownet2 with PWC-Net's patch
 set(CAFFE_PATH /root/flownet2)
 
-
-
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
@@ -48,7 +55,7 @@ include_directories(
   ${CAFFE_PATH}/build/src
 )
 
-add_library(${PROJECT_NAME} src/pwc_net.cu)
+add_library(${PROJECT_NAME} src/pwc_net_ros.cu)
 add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
@@ -64,19 +71,19 @@ add_dependencies(sample_node ${PROJECT_NAME})
 target_link_libraries(sample_node ${PROJECT_NAME})
 
 # Action server
-add_executable(action_server
+add_executable(pwcnet_action_server
   src/action_server.cpp
   src/action_server_node.cpp
 )
-add_dependencies(action_server ${PROJECT_NAME})
-target_link_libraries(action_server ${PROJECT_NAME})
+add_dependencies(pwcnet_action_server ${PROJECT_NAME})
+target_link_libraries(pwcnet_action_server ${PROJECT_NAME})
 
 # Action client
-add_executable(action_client
+add_executable(pwcnet_action_client
   src/action_client.cpp
   src/action_client_node.cpp
 )
-add_dependencies(action_client ${PROJECT_NAME})
-target_link_libraries(action_client ${PROJECT_NAME})
+add_dependencies(pwcnet_action_client ${PROJECT_NAME})
+target_link_libraries(pwcnet_action_client ${PROJECT_NAME})
 
 

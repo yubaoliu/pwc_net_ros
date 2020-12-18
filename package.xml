@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>pwc_net</name>
+  <name>pwc_net_ros</name>
   <version>0.1.0</version>
   <description>ROS interface for PWC-Net</description>
 

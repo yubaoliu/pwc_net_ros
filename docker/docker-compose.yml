@@ -2,13 +2,11 @@ version: "2.3"
 services: 
   master:
     build: .
-    container_name: pwc_master
     command: roscore
     network_mode: host
     privileged: true
 
   rqt:
-    container_name: pwc_rqt
     build: .
     depends_on:
       - master
@@ -19,13 +17,12 @@ services:
     volumes: 
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ..:/root/catkin_ws/src/pwc_net_ros/
-      - root:/root
+      # - root:/root
     network_mode: host
     privileged: true
 
   terminal:
     build: .
-    container_name: pwc_terminal
     command: lxterminal
     runtime: nvidia
     environment: 
@@ -35,9 +32,9 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ..:/root/catkin_ws/src/pwc_net_ros/
       - ${DATASET_DIR}:/root/Dataset
-      - root:/root
+      # - root:/root
     network_mode: host
     privileged: true
 
-volumes: 
-  root:
+# volumes: 
+  # root:

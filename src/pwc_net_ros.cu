@@ -11,28 +11,28 @@
 #include <fstream>
 #include <map>
 
-namespace pwc_net{
+namespace pwc_net_ros{
 
 // Put here to include pwc_net.h from non-CUDA project
 std::shared_ptr<caffe::Net<float>> net_;
 
 std::string PwcNet::generateTemporaryModelFile(const std::string &package_path) {
   std::string model_file_template = package_path + "/model/pwc_net_test.prototxt";
-  ROS_INFO_STREAM_NAMED("libpwc_net", "Loading template of model file: " << model_file_template);
+  ROS_INFO_STREAM_NAMED("libpwc_net_ros", "Loading template of model file: " << model_file_template);
 
   std::ifstream template_ifstream(model_file_template);
   if (!template_ifstream.is_open()) {
-    ROS_FATAL_STREAM_NAMED("libpwc_net", "Cannot open template file of model: " << model_file_template);
+    ROS_FATAL_STREAM_NAMED("libpwc_net_ros", "Cannot open template file of model: " << model_file_template);
     ros::shutdown();
     exit(EXIT_FAILURE);
   }
 
   std::string temporary_model_file = package_path + "/model/tmp_model_file.prototxt";
-  ROS_INFO_STREAM_NAMED("libpwc_net", "Generate temporary model file: " << temporary_model_file);
+  ROS_INFO_STREAM_NAMED("libpwc_net_ros", "Generate temporary model file: " << temporary_model_file);
 
   std::ofstream temporary_ofstream(temporary_model_file);
   if (!temporary_ofstream.is_open()) {
-    ROS_FATAL_STREAM_NAMED("libpwc_net", "Cannot open temporary model file: " << temporary_model_file);
+    ROS_FATAL_STREAM_NAMED("libpwc_net_ros", "Cannot open temporary model file: " << temporary_model_file);
     ros::shutdown();
     exit(EXIT_FAILURE);
   }
@@ -76,7 +76,7 @@ bool PwcNet::estimateOpticalFlow
   if (source_image_msg.width != dist_image_msg.width
     || source_image_msg.height != dist_image_msg.height)
   {
-    ROS_ERROR_STREAM_NAMED("libpwc_net",
+    ROS_ERROR_STREAM_NAMED("libpwc_net_ros",
       "Input images aren't same size!\n" <<
       "source: " << source_image_msg.width << "x" << source_image_msg.height << "\n" <<
       "dist: " << dist_image_msg.width << "x" << dist_image_msg.height
@@ -90,7 +90,7 @@ bool PwcNet::estimateOpticalFlow
     initializeNetwork(dist_image_msg.width, dist_image_msg.height);
   else if (dist_image_msg.width != target_width_ || dist_image_msg.height != target_height_)
   {
-    ROS_INFO_STREAM_NAMED("libpwc_net", 
+    ROS_INFO_STREAM_NAMED("libpwc_net_ros", 
       "Size of input image is not same to first input image which is used to initialize network.\n" << 
       "Reinitialize network for new size\n" << 
       "old: " << target_width_ << "x" << target_height_ << "\n" <<
@@ -109,7 +109,7 @@ bool PwcNet::estimateOpticalFlow
   }
   catch(const cv_bridge::Exception& exception) 
   {
-    ROS_ERROR_STREAM_NAMED("libpwc_net", exception.what());
+    ROS_ERROR_STREAM_NAMED("libpwc_net_ros", exception.what());
     return false;
   }
 
@@ -126,12 +126,12 @@ bool PwcNet::estimateOpticalFlow
 }
 
 void PwcNet::initializeNetwork(int image_width, int image_height) {
-  ROS_INFO_STREAM_NAMED("libpwc_net", "Start network initialization\n"
+  ROS_INFO_STREAM_NAMED("libpwc_net_ros", "Start network initialization\n"
     << "input image size: " << image_width << "x" << image_height);
 
   if (image_width <= 0 || image_height <= 0)
   {
-    ROS_FATAL_STREAM_NAMED("libpwc_net", "Invalid size is specified to network initialization!\n" 
+    ROS_FATAL_STREAM_NAMED("libpwc_net_ros", "Invalid size is specified to network initialization!\n" 
       << "Specified value: " << image_width << "x" << image_height);
       ros::shutdown();
       std::exit(EXIT_FAILURE);
@@ -144,21 +144,21 @@ void PwcNet::initializeNetwork(int image_width, int image_height) {
 
   std::string package_path = ros::package::getPath(PACKAGE_NAME_);
   if (package_path.empty()) {
-    ROS_FATAL_STREAM_NAMED("libpwc_net", "Package not found: " << PACKAGE_NAME_);
+    ROS_FATAL_STREAM_NAMED("libpwc_net_ros", "Package not found: " << PACKAGE_NAME_);
     ros::shutdown();
     std::exit(EXIT_FAILURE);
   }
 
   std::string temporary_model_file = generateTemporaryModelFile(package_path);
 
-  ROS_INFO_NAMED("libpwc_net", "Loading temporary model file");
+  ROS_INFO_NAMED("libpwc_net_ros", "Loading temporary model file");
   net_.reset(new caffe::Net<float>(temporary_model_file, caffe::TEST));
 
   std::string trained_file = package_path + "/model/pwc_net.caffemodel";
-  ROS_INFO_STREAM_NAMED("libpwc_net", "Loading trained file: " << trained_file);
+  ROS_INFO_STREAM_NAMED("libpwc_net_ros", "Loading trained file: " << trained_file);
   net_->CopyTrainedLayersFrom(trained_file);
 
-  ROS_INFO_STREAM_NAMED("libpwc_net", "Network initialization is finished");
+  ROS_INFO_STREAM_NAMED("libpwc_net_ros", "Network initialization is finished");
 }
 
 void PwcNet::outputLayerToCvMat(cv::Mat& optical_flow)

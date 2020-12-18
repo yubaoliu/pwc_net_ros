@@ -9,9 +9,9 @@
 #include <sensor_msgs/Image.h>
 
 #include <actionlib/client/simple_action_client.h>
-#include <pwc_net/opticalflowAction.h>
+#include <pwc_net_ros/opticalflowAction.h>
 
-namespace pwc_net {
+namespace pwc_net_ros {
 class ActionClient {
 public:
     ActionClient();
@@ -26,7 +26,7 @@ public:
         float max_magnitude);
 
 private:
-    actionlib::SimpleActionClient<pwc_net::opticalflowAction>* ac_;
+    actionlib::SimpleActionClient<pwc_net_ros::opticalflowAction>* ac_;
     std::shared_ptr<image_transport::ImageTransport> image_transport_;
     image_transport::Subscriber image_sub_;
     ros::Publisher flow_pub_;

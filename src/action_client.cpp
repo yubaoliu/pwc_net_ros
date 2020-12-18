@@ -1,6 +1,6 @@
 #include "action_client.h"
 
-namespace pwc_net {
+namespace pwc_net_ros {
 ActionClient::ActionClient()
 {
     ros::NodeHandle node_handle;
@@ -15,7 +15,7 @@ ActionClient::ActionClient()
     std::string action_name;
     node_handle.getParam("action_name", action_name);
 
-    ac_ = new actionlib::SimpleActionClient<pwc_net::opticalflowAction>(node_handle, action_name, true);
+    ac_ = new actionlib::SimpleActionClient<pwc_net_ros::opticalflowAction>(node_handle, action_name, true);
     ac_->waitForServer();
 
     image_transport_.reset(new image_transport::ImageTransport(node_handle));

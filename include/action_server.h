@@ -8,9 +8,9 @@
 #include <sensor_msgs/Image.h>
 
 #include <actionlib/server/simple_action_server.h>
-#include <pwc_net/opticalflowAction.h>
+#include <pwc_net_ros/opticalflowAction.h>
 
-namespace pwc_net {
+namespace pwc_net_ros {
 
 class ActionServer {
 private:
@@ -24,7 +24,7 @@ private:
     // sensor_msgs::ImageConstPtr previous_image_;
     sensor_msgs::ImagePtr previous_image_;
 
-    actionlib::SimpleActionServer<pwc_net::opticalflowAction>* as_;
+    actionlib::SimpleActionServer<pwc_net_ros::opticalflowAction>* as_;
 
     opticalflowFeedback feedback_;
     opticalflowResult result_;

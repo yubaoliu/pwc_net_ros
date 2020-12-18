@@ -6,11 +6,11 @@
 
 #include <opencv2/opencv.hpp>
 
-namespace pwc_net {
+namespace pwc_net_ros {
 
 class PwcNet {
 private:
-  const std::string PACKAGE_NAME_ = "pwc_net";
+  const std::string PACKAGE_NAME_ = "pwc_net_ros";
 
   const std::string SOURCE_IMAGE_BLOB_ = "img0";
   const std::string DIST_IMAGE_BLOB_ = "img1";

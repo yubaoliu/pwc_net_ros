@@ -11,7 +11,7 @@
 #include <map>
 #include <vector>
 
-namespace pwc_net {
+namespace pwc_net_ros {
 ActionServer::ActionServer()
 {
     ros::NodeHandle node_handle;
@@ -23,7 +23,7 @@ ActionServer::ActionServer()
     flow_pub_ = private_node_handle.advertise<sensor_msgs::Image>("optical_flow", 1);
     visualized_flow_pub_ = private_node_handle.advertise<sensor_msgs::Image>("visualized_optical_flow", 1);
 
-    as_ = new actionlib::SimpleActionServer<pwc_net::opticalflowAction>(node_handle, action_name, boost::bind(&ActionServer::executeCB, this, _1), false);
+    as_ = new actionlib::SimpleActionServer<pwc_net_ros::opticalflowAction>(node_handle, action_name, boost::bind(&ActionServer::executeCB, this, _1), false);
     as_->start();
 
     ROS_INFO("action name: %s \n", action_name);
