@@ -7,7 +7,9 @@ services:
     privileged: true
 
   rqt:
-    build: .
+    build:
+        context: .
+        dockerfile: dockerfile_release
     depends_on:
       - master
     command: rqt --perspective-file /root/catkin_ws/src/pwc_net_ros/rqt/test.perspective
@@ -22,7 +24,10 @@ services:
     privileged: true
 
   terminal:
-    build: .
+    image: yubaoliu/pwc_net_ros_release:cuda10
+    build:
+        context: .
+        dockerfile: dockerfile_release
     command: lxterminal
     runtime: nvidia
     environment: 
@@ -32,7 +37,6 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ..:/root/catkin_ws/src/pwc_net_ros/
       - ${DATASET_DIR}:/root/Dataset
-      - ${RESULT_DIR}:/root/results
       # - root:/root
     network_mode: host
     privileged: true

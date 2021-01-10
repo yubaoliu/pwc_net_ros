@@ -17,11 +17,14 @@ ActionServer::ActionServer()
     ros::NodeHandle node_handle;
     ros::NodeHandle private_node_handle("~");
 
+    bIsSaveResult_ = false;
+    bIsReset_ = false;
+
     std::string action_name;
     node_handle.getParam("action_name", action_name);
 
-    flow_pub_ = private_node_handle.advertise<sensor_msgs::Image>("optical_flow", 1);
-    visualized_flow_pub_ = private_node_handle.advertise<sensor_msgs::Image>("visualized_optical_flow", 1);
+    flow_pub_ = private_node_handle.advertise<sensor_msgs::Image>("/optical_flow", 5);
+    visualized_flow_pub_ = private_node_handle.advertise<sensor_msgs::Image>("/visualized_optical_flow", 5);
 
     as_ = new actionlib::SimpleActionServer<pwc_net_ros::opticalflowAction>(node_handle, action_name, boost::bind(&ActionServer::executeCB, this, _1), false);
     as_->start();
@@ -35,8 +38,13 @@ void ActionServer::executeCB(const opticalflowGoalConstPtr& goal)
         ROS_ERROR("action server starting failed");
         return;
     }
-    std::cout << "id: " << goal->id << std::endl;
-    ROS_INFO("id: %d", goal->id);
+    id_ = goal->id;
+    ROS_INFO("-------ID: %d ------------", id_);
+    bIsReset_ = goal->reset;
+    if (bIsReset_) {
+        ROS_INFO("Reset the loop");
+        previous_image_.reset(new sensor_msgs::Image);
+    }
 
     cv_bridge::CvImageConstPtr cvpImage;
     try {
@@ -54,18 +62,49 @@ void ActionServer::executeCB(const opticalflowGoalConstPtr& goal)
 
         if (success) {
             sensor_msgs::ImagePtr opticalflowMsg = optical_flow.toImageMsg();
-            flow_pub_.publish(opticalflowMsg);
             result_.id = goal->id;
             result_.opticalflow = *opticalflowMsg;
             as_->setSucceeded(result_);
 
+            // publish the results
+            if (flow_pub_.getNumSubscribers() > 0) {
+                flow_pub_.publish(opticalflowMsg);
+            }
+
+            // TODO use a thread to deal with
             cv_bridge::CvImage visualized_optical_flow(image->header, sensor_msgs::image_encodings::BGR8);
             pwc_net_.visualizeOpticalFlow(optical_flow.image, visualized_optical_flow.image, 5.0f);
+            if (visualized_flow_pub_.getNumSubscribers()) {
+                visualized_flow_pub_.publish(visualized_optical_flow.toImageMsg());
+            }
+            if (bIsSaveResult_) {
+                std::string name = flow_path_ + std::to_string(goal->id) + ".png";
+                cv::optflow::writeOpticalFlow(name, optical_flow.image);
 
-            visualized_flow_pub_.publish(visualized_optical_flow.toImageMsg());
+                name = flow_color_path_ + std::to_string(goal->id) + ".png";
+                cv::imwrite(name, visualized_optical_flow.image);
+            }
         }
     }
 
     previous_image_ = image;
+}
+
+void ActionServer::IsSaveResult(bool bSave, std::string rootDir)
+{
+    bIsSaveResult_ = bSave;
+    rootDir_ = rootDir;
+
+    // LOG(INFO) << "Root directory: " << rootDir_;
+    ROS_INFO("Root directory: %s", rootDir_);
+
+    std::string str = rootDir;
+    system(("mkdir -p " + str).c_str());
+
+    flow_path_ = rootDir + "/flow/";
+    system(("mkdir -p " + flow_path_).c_str());
+
+    flow_color_path_ = rootDir + "/flow_color/";
+    system(("mkdir -p " + flow_color_path_).c_str());
 }
 }

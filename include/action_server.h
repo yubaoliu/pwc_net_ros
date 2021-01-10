@@ -10,9 +10,15 @@
 #include <actionlib/server/simple_action_server.h>
 #include <pwc_net_ros/opticalflowAction.h>
 
+#include <opencv2/optflow.hpp>
+
 namespace pwc_net_ros {
 
 class ActionServer {
+public:
+    ActionServer();
+    void IsSaveResult(bool bSave, std::string rootDir = "/root/results/pwcnet");
+
 private:
     std::shared_ptr<image_transport::ImageTransport> image_transport_;
     image_transport::Subscriber image_sub_;
@@ -32,8 +38,14 @@ private:
     // void imageCallback(const sensor_msgs::ImageConstPtr& image_msg);
     void executeCB(const opticalflowGoalConstPtr& t_goal);
 
-public:
-    ActionServer();
+    // save results
+    bool bIsSaveResult_;
+    std::string rootDir_, flow_path_, flow_color_path_;
+
+    // goal
+    int id_;
+    bool bIsReset_;
+
 };
 
 } // namespace pwc_net

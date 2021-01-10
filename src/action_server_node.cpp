@@ -2,9 +2,17 @@
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "pwc_net_action_server");
-  pwc_net_ros::ActionServer actionServer;
-  ros::spin();
+    ros::init(argc, argv, "pwc_net_action_server");
+    ros::start();
 
-  return 0;
+    pwc_net_ros::ActionServer actionServer;
+    if (argc == 2) {
+        actionServer.IsSaveResult(true, argv[1]);
+    } else {
+        actionServer.IsSaveResult(false);
+    }
+
+    ros::spin();
+
+    return 0;
 }
