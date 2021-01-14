@@ -11,6 +11,7 @@
 #include <map>
 #include <vector>
 
+using namespace aislam_msg;
 namespace pwc_net_ros {
 ActionServer::ActionServer()
 {
@@ -18,7 +19,7 @@ ActionServer::ActionServer()
     ros::NodeHandle private_node_handle("~");
 
     bIsSaveResult_ = false;
-    bIsReset_ = false;
+    command_ = 0;
 
     std::string action_name;
     node_handle.getParam("action_name", action_name);
@@ -26,13 +27,13 @@ ActionServer::ActionServer()
     flow_pub_ = private_node_handle.advertise<sensor_msgs::Image>("/optical_flow", 5);
     visualized_flow_pub_ = private_node_handle.advertise<sensor_msgs::Image>("/visualized_optical_flow", 5);
 
-    as_ = new actionlib::SimpleActionServer<pwc_net_ros::opticalflowAction>(node_handle, action_name, boost::bind(&ActionServer::executeCB, this, _1), false);
+    as_ = new actionlib::SimpleActionServer<aislam_msg::semanticAction>(node_handle, action_name, boost::bind(&ActionServer::executeCB, this, _1), false);
     as_->start();
 
     ROS_INFO("action name: %s \n", action_name);
 }
 
-void ActionServer::executeCB(const opticalflowGoalConstPtr& goal)
+void ActionServer::executeCB(const semanticGoalConstPtr& goal)
 {
     if (!as_->isActive()) {
         ROS_ERROR("action server starting failed");
@@ -40,8 +41,8 @@ void ActionServer::executeCB(const opticalflowGoalConstPtr& goal)
     }
     id_ = goal->id;
     ROS_INFO("-------ID: %d ------------", id_);
-    bIsReset_ = goal->reset;
-    if (bIsReset_) {
+    command_ = goal->command;
+    if (command_ == 1) {
         ROS_INFO("Reset the loop");
         previous_image_.reset(new sensor_msgs::Image);
     }
@@ -63,7 +64,7 @@ void ActionServer::executeCB(const opticalflowGoalConstPtr& goal)
         if (success) {
             sensor_msgs::ImagePtr opticalflowMsg = optical_flow.toImageMsg();
             result_.id = goal->id;
-            result_.opticalflow = *opticalflowMsg;
+            result_.mask= *opticalflowMsg;
             as_->setSucceeded(result_);
 
             // publish the results

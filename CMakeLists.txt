@@ -24,10 +24,10 @@ find_package(catkin REQUIRED
 find_package(OpenCV REQUIRED)
 
 # Generate actions in the 'action' folder
-add_action_files(
-  FILES
-    opticalflow.action
-)
+# add_action_files(
+#   FILES
+#     opticalflow.action
+# )
 
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
@@ -53,6 +53,7 @@ include_directories(
   ${OpenCV_INCLUDE_DIRS}
   ${CAFFE_PATH}/include
   ${CAFFE_PATH}/build/src
+  /root/catkin_ws/devel/include
 )
 
 add_library(${PROJECT_NAME} src/pwc_net_ros.cu)

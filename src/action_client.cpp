@@ -1,5 +1,5 @@
 #include "action_client.h"
-
+using namespace aislam_msg;
 namespace pwc_net_ros {
 ActionClient::ActionClient()
 {
@@ -15,7 +15,7 @@ ActionClient::ActionClient()
     std::string action_name;
     node_handle.getParam("action_name", action_name);
 
-    ac_ = new actionlib::SimpleActionClient<pwc_net_ros::opticalflowAction>(node_handle, action_name, true);
+    ac_ = new actionlib::SimpleActionClient<aislam_msg::semanticAction>(node_handle, action_name, true);
     ac_->waitForServer();
 
     image_transport_.reset(new image_transport::ImageTransport(node_handle));
@@ -44,7 +44,7 @@ bool ActionClient::estimateOpticalFlow(
     const sensor_msgs::Image& source_image_msg,
     cv::Mat& optical_flow)
 {
-    opticalflowGoal goal;
+    semanticGoal goal;
     goal.id = ++factory_id_;
     goal.image = source_image_msg;
 
@@ -67,7 +67,7 @@ bool ActionClient::estimateOpticalFlow(
         cv_bridge::CvImageConstPtr cvpImage;
         try {
             cv::Mat visualized_optical_flow;
-            cvpImage = cv_bridge::toCvCopy(result_->opticalflow, "32FC2");
+            cvpImage = cv_bridge::toCvCopy(result_->mask, "32FC2");
             visualize(cvpImage->image, visualized_optical_flow, 5.0f);
             cv::imshow("opticalflow", visualized_optical_flow);
             cv::waitKey(1);

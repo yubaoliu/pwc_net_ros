@@ -8,7 +8,7 @@
 #include <sensor_msgs/Image.h>
 
 #include <actionlib/server/simple_action_server.h>
-#include <pwc_net_ros/opticalflowAction.h>
+#include <aislam_msg/semanticAction.h>
 
 #include <opencv2/optflow.hpp>
 
@@ -30,13 +30,13 @@ private:
     // sensor_msgs::ImageConstPtr previous_image_;
     sensor_msgs::ImagePtr previous_image_;
 
-    actionlib::SimpleActionServer<pwc_net_ros::opticalflowAction>* as_;
+    actionlib::SimpleActionServer<aislam_msg::semanticAction>* as_;
 
-    opticalflowFeedback feedback_;
-    opticalflowResult result_;
+    aislam_msg::semanticFeedback feedback_;
+    aislam_msg::semanticResult result_;
 
     // void imageCallback(const sensor_msgs::ImageConstPtr& image_msg);
-    void executeCB(const opticalflowGoalConstPtr& t_goal);
+    void executeCB(const aislam_msg::semanticGoalConstPtr& t_goal);
 
     // save results
     bool bIsSaveResult_;
@@ -44,7 +44,7 @@ private:
 
     // goal
     int id_;
-    bool bIsReset_;
+    int command_;
 
 };
 

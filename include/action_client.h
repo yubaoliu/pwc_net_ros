@@ -9,7 +9,7 @@
 #include <sensor_msgs/Image.h>
 
 #include <actionlib/client/simple_action_client.h>
-#include <pwc_net_ros/opticalflowAction.h>
+#include <aislam_msg/semanticAction.h>
 
 namespace pwc_net_ros {
 class ActionClient {
@@ -26,12 +26,12 @@ public:
         float max_magnitude);
 
 private:
-    actionlib::SimpleActionClient<pwc_net_ros::opticalflowAction>* ac_;
+    actionlib::SimpleActionClient<aislam_msg::semanticAction>* ac_;
     std::shared_ptr<image_transport::ImageTransport> image_transport_;
     image_transport::Subscriber image_sub_;
     ros::Publisher flow_pub_;
 
-    opticalflowResultConstPtr result_;
+    aislam_msg::semanticResultConstPtr result_;
     long int factory_id_;
 };
 }

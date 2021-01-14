@@ -1,11 +1,12 @@
 int64 id
 sensor_msgs/Image  image
-bool reset
+sensor_msgs/Image depth
+bool command
 
 ---
 
 int64 id
-sensor_msgs/Image  opticalflow
+sensor_msgs/Image  mask
 
 ---
 

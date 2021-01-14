@@ -36,6 +36,7 @@ services:
     volumes: 
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ..:/root/catkin_ws/src/pwc_net_ros/
+      - ../../aislam_msg:/root/catkin_ws/src/aislam_msg
       - ${DATASET_DIR}:/root/Dataset
       # - root:/root
     network_mode: host
