@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>pwc_net_ros</name>
+  <name>pwcnet_ros</name>
   <version>0.1.0</version>
   <description>ROS interface for PWC-Net</description>
 
@@ -17,6 +17,7 @@
   <depend>actionlib_msgs</depend>
   <depend>std_msgs</depend>
   <depend>aislam_msg</depend>
+  <depend>dynamic_reconfigure</depend>
 
   <exec_depend>message_runtime</exec_depend>
   <exec_depend>message_generation</exec_depend>

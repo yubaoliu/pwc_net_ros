@@ -7,7 +7,7 @@
 #include <image_transport/image_transport.h>
 #include <sensor_msgs/Image.h>
 
-namespace pwc_net_ros {
+namespace pwcnet_ros {
 
 class SampleNode {
 private:

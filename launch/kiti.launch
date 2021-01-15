@@ -1,5 +1,5 @@
 <launch>
-  <node name="kitti" pkg="pwc_net_ros" type="sample_node" required="true">
+  <node name="kitti" pkg="pwcnet_ros" type="sample_node" required="true">
     <remap from="image" to="stereo_robot/mobile_base/camera/left/image_raw"/>
     <param name="image_transport" value="compressed"/>
   </node>

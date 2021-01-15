@@ -11,7 +11,7 @@
 #include <map>
 #include <vector>
 
-namespace pwc_net_ros {
+namespace pwcnet_ros {
 
 SampleNode::SampleNode()
 {

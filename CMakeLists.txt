@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
-# project(pwc_net_ros)
-project(pwc_net_ros CUDA CXX)
+# project(pwcnet_ros)
+project(pwcnet_ros CUDA CXX)
 
 add_compile_options(-std=c++11)
 
@@ -20,6 +20,7 @@ find_package(catkin REQUIRED
   message_generation
   actionlib
   actionlib_msgs
+  dynamic_reconfigure
 )
 find_package(OpenCV REQUIRED)
 
@@ -28,6 +29,10 @@ find_package(OpenCV REQUIRED)
 #   FILES
 #     opticalflow.action
 # )
+
+generate_dynamic_reconfigure_options(
+  cfg/pwcnet.cfg
+)
 
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
@@ -38,7 +43,7 @@ generate_messages(
 )
 
 catkin_package(
-  CATKIN_DEPENDS cv_bridge image_transport roscpp sensor_msgs
+  CATKIN_DEPENDS cv_bridge image_transport roscpp sensor_msgs dynamic_reconfigure
   DEPENDS OpenCV
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
@@ -68,23 +73,26 @@ add_executable(sample_node
   src/sample_node.cpp
   src/sample_node_main.cpp
 )
-add_dependencies(sample_node ${PROJECT_NAME})
+# add_dependencies(sample_node ${PROJECT_NAME})
 target_link_libraries(sample_node ${PROJECT_NAME})
+add_dependencies(sample_node ${PROJECT_NAME}_gencfg)
 
 # Action server
 add_executable(pwcnet_action_server
   src/action_server.cpp
   src/action_server_node.cpp
 )
-add_dependencies(pwcnet_action_server ${PROJECT_NAME})
+# add_dependencies(pwcnet_action_server ${PROJECT_NAME})
 target_link_libraries(pwcnet_action_server ${PROJECT_NAME})
+add_dependencies(pwcnet_action_server ${PROJECT_NAME}_gencfg)
 
 # Action client
 add_executable(pwcnet_action_client
   src/action_client.cpp
   src/action_client_node.cpp
 )
-add_dependencies(pwcnet_action_client ${PROJECT_NAME})
+# add_dependencies(pwcnet_action_client ${PROJECT_NAME})
 target_link_libraries(pwcnet_action_client ${PROJECT_NAME})
+add_dependencies(pwcnet_action_client ${PROJECT_NAME}_gencfg)
 
 

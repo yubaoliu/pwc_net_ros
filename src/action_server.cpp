@@ -12,25 +12,38 @@
 #include <vector>
 
 using namespace aislam_msg;
-namespace pwc_net_ros {
-ActionServer::ActionServer()
+namespace pwcnet_ros {
+ActionServer::ActionServer(ros::NodeHandle& pnh, ros::NodeHandle& gnh)
+    : pnh_(pnh)
+    , gnh_(gnh)
 {
-    ros::NodeHandle node_handle;
-    ros::NodeHandle private_node_handle("~");
+    // Dynamic reconfigure
+    reconfigure_server_.reset(new ReconfigureServer(pnh_));
+    reconfigure_func_ = boost::bind(&ActionServer::reconfigureCB, this, _1, _2);
+    reconfigure_server_->setCallback(reconfigure_func_);
 
-    bIsSaveResult_ = false;
     command_ = 0;
 
-    std::string action_name;
-    node_handle.getParam("action_name", action_name);
+    flow_pub_ = pnh_.advertise<sensor_msgs::Image>(flow_pub_topic_, 5);
+    flow_color_pub_ = pnh_.advertise<sensor_msgs::Image>(flow_color_pub_topic_, 5);
 
-    flow_pub_ = private_node_handle.advertise<sensor_msgs::Image>("/optical_flow", 5);
-    visualized_flow_pub_ = private_node_handle.advertise<sensor_msgs::Image>("/visualized_optical_flow", 5);
-
-    as_ = new actionlib::SimpleActionServer<aislam_msg::semanticAction>(node_handle, action_name, boost::bind(&ActionServer::executeCB, this, _1), false);
+    as_ = new actionlib::SimpleActionServer<aislam_msg::semanticAction>(gnh_, action_name_, boost::bind(&ActionServer::executeCB, this, _1), false);
     as_->start();
 
-    ROS_INFO("action name: %s \n", action_name);
+    this->saveResult();
+    ROS_INFO("---- PWCNet Ready -----");
+}
+
+void ActionServer::reconfigureCB(pwcnet_ros::pwcnetConfig& config, uint32_t level)
+{
+    ROS_INFO("Reconfigure Request");
+    bIsSaveResult_ = config.bIsSaveResult;
+    save_path_ = config.save_path;
+    action_name_ = config.action_name;
+    flow_pub_topic_ = config.flow_pub_topic;
+    flow_color_pub_topic_ = config.flow_color_pub_topic;
+
+    ROS_INFO("action name: %s \n", action_name_);
 }
 
 void ActionServer::executeCB(const semanticGoalConstPtr& goal)
@@ -39,9 +52,10 @@ void ActionServer::executeCB(const semanticGoalConstPtr& goal)
         ROS_ERROR("action server starting failed");
         return;
     }
-    id_ = goal->id;
     ROS_INFO("-------ID: %d ------------", id_);
+    id_ = goal->id;
     command_ = goal->command;
+
     if (command_ == 1) {
         ROS_INFO("Reset the loop");
         previous_image_.reset(new sensor_msgs::Image);
@@ -64,7 +78,7 @@ void ActionServer::executeCB(const semanticGoalConstPtr& goal)
         if (success) {
             sensor_msgs::ImagePtr opticalflowMsg = optical_flow.toImageMsg();
             result_.id = goal->id;
-            result_.mask= *opticalflowMsg;
+            result_.mask = *opticalflowMsg;
             as_->setSucceeded(result_);
 
             // publish the results
@@ -75,8 +89,8 @@ void ActionServer::executeCB(const semanticGoalConstPtr& goal)
             // TODO use a thread to deal with
             cv_bridge::CvImage visualized_optical_flow(image->header, sensor_msgs::image_encodings::BGR8);
             pwc_net_.visualizeOpticalFlow(optical_flow.image, visualized_optical_flow.image, 5.0f);
-            if (visualized_flow_pub_.getNumSubscribers()) {
-                visualized_flow_pub_.publish(visualized_optical_flow.toImageMsg());
+            if (flow_color_pub_.getNumSubscribers()) {
+                flow_color_pub_.publish(visualized_optical_flow.toImageMsg());
             }
             if (bIsSaveResult_) {
                 std::string name = flow_path_ + std::to_string(goal->id) + ".png";
@@ -91,21 +105,20 @@ void ActionServer::executeCB(const semanticGoalConstPtr& goal)
     previous_image_ = image;
 }
 
-void ActionServer::IsSaveResult(bool bSave, std::string rootDir)
+void ActionServer::saveResult()
 {
-    bIsSaveResult_ = bSave;
-    rootDir_ = rootDir;
+    if (bIsSaveResult_) {
+        // LOG(INFO) << "Root directory: " << save_path_;
+        ROS_INFO("Root directory: %s", save_path_);
 
-    // LOG(INFO) << "Root directory: " << rootDir_;
-    ROS_INFO("Root directory: %s", rootDir_);
+        std::string str = save_path_;
+        system(("mkdir -p " + str).c_str());
 
-    std::string str = rootDir;
-    system(("mkdir -p " + str).c_str());
+        flow_path_ = save_path_ + "/flow/";
+        system(("mkdir -p " + flow_path_).c_str());
 
-    flow_path_ = rootDir + "/flow/";
-    system(("mkdir -p " + flow_path_).c_str());
-
-    flow_color_path_ = rootDir + "/flow_color/";
-    system(("mkdir -p " + flow_color_path_).c_str());
+        flow_color_path_ = save_path_ + "/flow_color/";
+        system(("mkdir -p " + flow_color_path_).c_str());
+    }
 }
 }

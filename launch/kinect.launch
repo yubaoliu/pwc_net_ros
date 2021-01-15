@@ -1,5 +1,5 @@
 <launch>
-  <node name="kinect" pkg="pwc_net_ros" type="sample_node" required="true">
+  <node name="kinect" pkg="pwcnet_ros" type="sample_node" required="true">
     <remap from="image" to="/kinect2/qhd/image_color"/>
     <param name="image_transport" value="raw"/>
   </node>

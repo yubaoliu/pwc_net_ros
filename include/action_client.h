@@ -11,7 +11,7 @@
 #include <actionlib/client/simple_action_client.h>
 #include <aislam_msg/semanticAction.h>
 
-namespace pwc_net_ros {
+namespace pwcnet_ros {
 class ActionClient {
 public:
     ActionClient();

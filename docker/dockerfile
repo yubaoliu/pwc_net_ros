@@ -78,6 +78,13 @@ RUN echo "source /root/catkin_ws/devel/setup.bash" >> /root/.bashrc
 RUN apt-get update && \
     apt-get install -y vim byobu lxterminal xterm ros-melodic-rqt ros-melodic-rqt-common-plugins ros-melodic-image-transport-plugins gdb
 
+RUN apt-get install ros-melodic-desktop
+
+RUN cd ~ && git clone https://github.com/yubaoliu/dotfiles.git \
+    && cp -rf  ~/dotfiles/.  ~
+   # && /bin/bash -c "./install.sh"  \
+   # && /bin/bash -c "./deploy.sh"
+
 # Load ROS environment at each run
 COPY ./ros_entrypoint.sh /
 

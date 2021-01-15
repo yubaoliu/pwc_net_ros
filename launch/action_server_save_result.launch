@@ -2,6 +2,6 @@
   <param name="action_name" value="pwcnet_action"/>
   <arg name="ROOT_DIR" value="/root/results/pwcnet" />
 
-  <node name="PWCNet" pkg="pwc_net_ros" type="pwcnet_action_server" args="$(arg ROOT_DIR)" required="true" output="screen">
+  <node name="PWCNet" pkg="pwcnet_ros" type="pwcnet_action_server" args="$(arg ROOT_DIR)" required="true" output="screen">
   </node>
 </launch>

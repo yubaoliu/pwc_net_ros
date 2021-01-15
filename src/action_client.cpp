@@ -1,6 +1,6 @@
 #include "action_client.h"
 using namespace aislam_msg;
-namespace pwc_net_ros {
+namespace pwcnet_ros {
 ActionClient::ActionClient()
 {
     ros::NodeHandle node_handle;

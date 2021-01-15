@@ -1,9 +1,9 @@
 <launch>
-  <node name="bag_player" pkg="rosbag" type="play" args="--loop $(find pwc_net_ros)/bag/test_input.bag"/>
+  <node name="bag_player" pkg="rosbag" type="play" args="$(find pwcnet_ros)/bag/test_input.bag"/>
 
   <param name="action_name" value="pwcnet_action"/>
 
-  <node name="pwc_net_action_client" pkg="pwc_net_ros" type="pwcnet_action_client" required="true" output="screen">
+  <node name="pwc_net_action_client" pkg="pwcnet_ros" type="pwcnet_action_client" required="true" output="screen">
     <remap from="image" to="stereo_robot/mobile_base/camera/left/image_raw"/>
     <param name="image_transport" value="compressed"/>
   </node>

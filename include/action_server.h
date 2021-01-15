@@ -12,18 +12,26 @@
 
 #include <opencv2/optflow.hpp>
 
-namespace pwc_net_ros {
+#include <dynamic_reconfigure/server.h>
+#include <pwcnet_ros/pwcnetConfig.h>
+
+namespace pwcnet_ros {
 
 class ActionServer {
 public:
-    ActionServer();
-    void IsSaveResult(bool bSave, std::string rootDir = "/root/results/pwcnet");
+    ActionServer(ros::NodeHandle& pnh, ros::NodeHandle& gnh);
 
 private:
+    // Dynamic reconfigure
+    using ReconfigureServer = dynamic_reconfigure::Server<pwcnet_ros::pwcnetConfig>;
+    std::shared_ptr<ReconfigureServer> reconfigure_server_;
+    ReconfigureServer::CallbackType reconfigure_func_;
+
+    void reconfigureCB(pwcnet_ros::pwcnetConfig& config, uint32_t level);
+    void saveResult();
+
     std::shared_ptr<image_transport::ImageTransport> image_transport_;
     image_transport::Subscriber image_sub_;
-    ros::Publisher flow_pub_;
-    ros::Publisher visualized_flow_pub_;
 
     PwcNet pwc_net_;
 
@@ -40,12 +48,22 @@ private:
 
     // save results
     bool bIsSaveResult_;
-    std::string rootDir_, flow_path_, flow_color_path_;
+    std::string save_path_, flow_path_, flow_color_path_;
 
     // goal
     int id_;
     int command_;
 
+    std::string action_name_;
+
+    std::string flow_pub_topic_;
+    ros::Publisher flow_pub_;
+
+    std::string flow_color_pub_topic_;
+    ros::Publisher flow_color_pub_;
+
+    ros::NodeHandle gnh_;
+    ros::NodeHandle pnh_;
 };
 
 } // namespace pwc_net

@@ -1,16 +1,16 @@
-#ifndef PWC_NET__PWC_NET_H_
-#define PWC_NET__PWC_NET_H_
+#ifndef PWC_NET_PWC_NET_H_
+#define PWC_NET_PWC_NET_H_
 
 #include <ros/ros.h>
 #include <sensor_msgs/Image.h>
 
 #include <opencv2/opencv.hpp>
 
-namespace pwc_net_ros {
+namespace pwcnet_ros {
 
 class PwcNet {
 private:
-  const std::string PACKAGE_NAME_ = "pwc_net_ros";
+  const std::string PACKAGE_NAME_ = "pwcnet_ros";
 
   const std::string SOURCE_IMAGE_BLOB_ = "img0";
   const std::string DIST_IMAGE_BLOB_ = "img1";

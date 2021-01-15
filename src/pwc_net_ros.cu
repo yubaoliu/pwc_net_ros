@@ -11,7 +11,7 @@
 #include <fstream>
 #include <map>
 
-namespace pwc_net_ros{
+namespace pwcnet_ros{
 
 // Put here to include pwc_net.h from non-CUDA project
 std::shared_ptr<caffe::Net<float>> net_;
