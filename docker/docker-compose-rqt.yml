@@ -1,0 +1,43 @@
+version: "2.3"
+services: 
+  master:
+    build: .
+    command: bash
+    # command: roscore
+    network_mode: host
+    privileged: true
+
+  rqt:
+    build: .
+    depends_on:
+      - master
+    command: rqt --perspective-file /root/catkin_ws/src/pwc_net_ros/rqt/test.perspective
+    environment: 
+      - DISPLAY
+      - QT_X11_NO_MITSHM=1
+    volumes: 
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ..:/root/catkin_ws/src/pwc_net_ros
+      # - root:/root
+    network_mode: host
+    privileged: true
+
+  terminal:
+    build: .
+    command: lxterminal
+    runtime: nvidia
+    environment: 
+      - DISPLAY
+      - QT_X11_NO_MITSHM=1
+    volumes: 
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ..:/root/catkin_ws/src/pwcnet_ros
+      - ../../aislam_msg:/root/catkin_ws/src/aislam_msg
+      - ${DATASET_DIR}:/root/Dataset
+      - ${RESULT_DIR}:/root/results
+      # - pwc_net:/root
+    network_mode: host
+    privileged: true
+
+# volumes: 
+  # pwc_net:

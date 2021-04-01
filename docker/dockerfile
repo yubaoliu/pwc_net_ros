@@ -20,7 +20,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 RUN rosdep init
 RUN rosdep update
 # Install ROS-Base packages
-RUN apt-get update && apt-get install -y ros-melodic-ros-base
+RUN apt-get update && apt-get install -y ros-melodic-ros-base ros-melodic-desktop
 
 # Install packages to build caffe
 RUN apt-get update && apt-get install -y \
@@ -78,7 +78,6 @@ RUN echo "source /root/catkin_ws/devel/setup.bash" >> /root/.bashrc
 RUN apt-get update && \
     apt-get install -y vim byobu lxterminal xterm ros-melodic-rqt ros-melodic-rqt-common-plugins ros-melodic-image-transport-plugins gdb
 
-RUN apt-get install ros-melodic-desktop
 
 RUN cd ~ && git clone https://github.com/yubaoliu/dotfiles.git \
     && cp -rf  ~/dotfiles/.  ~

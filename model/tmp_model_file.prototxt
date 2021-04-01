@@ -3,7 +3,7 @@ layer {
   type: "Input"
   top: "img0"
   input_param {
-    shape: { dim: 1 dim: 3 dim: 376 dim: 1248 }
+    shape: { dim: 1 dim: 3 dim: 480 dim: 640 }
   }
 }
 layer {
@@ -11,7 +11,7 @@ layer {
   type: "Input"
   top: "img1"
   input_param {
-    shape: { dim: 1 dim: 3 dim: 376 dim: 1248 }
+    shape: { dim: 1 dim: 3 dim: 480 dim: 640 }
   }
 }
 
@@ -44,8 +44,8 @@ layer {
     augment_during_test: true
     recompute_mean: 1000
     mean_per_pixel: false
-    crop_width: 1248
-    crop_height: 376
+    crop_width: 640
+    crop_height: 480
   }
 }
 layer {
@@ -57,8 +57,8 @@ layer {
     augment_during_test: true
     recompute_mean: 1000
     mean_per_pixel: false
-    crop_width: 1248
-    crop_height: 376
+    crop_width: 640
+    crop_height: 480
   }
 }
 layer {
@@ -67,8 +67,8 @@ layer {
   bottom: "img1_nomean"
   top: "img1_nomean_resize"
   resample_param {
-    width: 1280
-    height: 384
+    width: 640
+    height: 512
     type: LINEAR
     antialias: true
   }
@@ -79,8 +79,8 @@ layer {
   bottom: "img0_nomean"
   top: "img0_nomean_resize"
   resample_param {
-    width: 1280
-    height: 384
+    width: 640
+    height: 512
     type: LINEAR
     antialias: true
   }
@@ -2914,8 +2914,8 @@ layer {
   bottom: "blob44"
   top: "predict_flow_resize"
   resample_param {
-    width: 1248
-    height: 376
+    width: 640
+    height: 480
     type: LINEAR
     antialias: true
   }
@@ -2932,8 +2932,8 @@ layer {
     stride: 1
     weight_filler {
       type: "diagonal"
-      diag_val: 0.975000
-      diag_val: 0.979167
+      diag_val: 1.000000
+      diag_val: 0.937500
     }
     bias_filler {
       type: "constant"

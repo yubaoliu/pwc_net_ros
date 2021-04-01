@@ -1,10 +1,10 @@
 version: "2.3"
 services: 
-  pwcnet_server:
-    container_name: pwcnet_server
+  pwcnet_client:
     build: .
+    container_name: pwcnet_client
     # command: lxterminal
-    command: roslaunch pwcnet_ros action_server.launch
+    command: roslaunch pwcnet_ros action_client.launch
     runtime: nvidia
     environment: 
       - DISPLAY

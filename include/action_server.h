@@ -22,6 +22,10 @@ public:
     ActionServer(ros::NodeHandle& pnh, ros::NodeHandle& gnh);
 
 private:
+    // evaluate result
+    unsigned long int total_frame_num_;
+    float total_estimate_time_;
+
     // Dynamic reconfigure
     using ReconfigureServer = dynamic_reconfigure::Server<pwcnet_ros::pwcnetConfig>;
     std::shared_ptr<ReconfigureServer> reconfigure_server_;

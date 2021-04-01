@@ -1,6 +1,5 @@
 <launch>
-  <param name="action_name" value="pwcnet_action"/>
-
   <node name="pwc_net_action_server" pkg="pwcnet_ros" type="pwcnet_action_server" required="true" output="screen">
+    <rosparam file="$(find pwcnet_ros)/params/pwcnet.yaml" command="load" />
   </node>
 </launch>

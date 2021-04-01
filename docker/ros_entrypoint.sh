@@ -12,4 +12,6 @@ catkin_make
 source "/opt/ros/melodic/setup.bash"
 source "/root/catkin_ws/devel/setup.bash"
 
+echo "------------- PWCNet Action Server Ready ----------------------------"
+
 exec "$@"
